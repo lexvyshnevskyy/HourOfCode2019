@@ -32,7 +32,9 @@ cd ~
 ##
 sudo rm -r opencv-3.4.4/
 sudo rm -r opencv_contrib-3.4.4
-unzip opencv-contrib.zip && unzip -q opencv.zip && cd opencv-3.4.4/ && mkdir build && cd build
+wget -O opencv.zip https://github.com/opencv/opencv/archive/3.4.4.zip
+wget -O opencv-contrib.zip https://github.com/opencv/opencv_contrib/archive/3.4.4.zip
+unzip opencv-contrib.zip && unzip -q opencv.zip && cd opencv-4.0.1/ && mkdir build && cd build
 
 cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
