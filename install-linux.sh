@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-sudo apt-get install python3-dev python3-numpy\
+sudo apt-get install python3-dev python3-numpy
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python3 get-pip.py
 sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev
@@ -12,9 +12,7 @@ sudo apt-get install libjpeg-dev
 sudo apt-get install libopenexr-dev
 sudo apt-get install libtiff-dev
 sudo apt-get install libwebp-dev
-###### only if youll use CUDA
-##sudo apt install nvidia-cuda-toolkit
-##sudo apt install nvidia-cuda-dev
+
 sudo apt-get install libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 sudo apt install ubuntu-restricted-extras ffmpeg v4l-utils
 cd yolo-coco
@@ -29,12 +27,13 @@ make
 sudo make install
 
 cd ~
+pip3 install numpy
 ##
 sudo rm -r opencv-3.4.4/
 sudo rm -r opencv_contrib-3.4.4
 wget -O opencv.zip https://github.com/opencv/opencv/archive/3.4.4.zip
 wget -O opencv-contrib.zip https://github.com/opencv/opencv_contrib/archive/3.4.4.zip
-unzip opencv-contrib.zip && unzip -q opencv.zip && cd opencv-4.0.1/ && mkdir build && cd build
+unzip opencv-contrib.zip && unzip -q opencv.zip && cd opencv-3.4.4/ && mkdir build && cd build
 
 cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -42,17 +41,24 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D INSTALL_C_EXAMPLES=OFF \
 -D PYTHON_EXECUTABLE=$(which python3) \
 -D BUILD_opencv_python2=OFF \
+-D BUILD_opencv_python3=ON \
 -D CMAKE_INSTALL_PREFIX=$(python3 -c "import sys; print(sys.prefix)") \
 -D PYTHON3_EXECUTABLE=$(which python3) \
 -D PYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
 -D PYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
 -D WITH_GSTREAMER=ON \
+-D BUILD_opencv_java=OFF \
+-D BUILD_TIFF=ON \
+-D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-3.4.4/modules \
+-D OPENCV_ENABLE_NONFREE=ON \
 -D BUILD_EXAMPLES=ON ..
 
 make -j$(nproc)
 sudo make install
-sudo mkdir /usr/local/lib/$(python3 -c "import sys;print(''.join(str(x) for x in ['python-',sys.version_info.major,'.',sys.version_info.minor]))")/site-packages
+sudo mkdir /usr/local/lib/$(python3 -c "import sys;print(''.join(str(x) for x in ['python',sys.version_info.major,'.',sys.version_info.minor]))")/site-packages
+
 sudo rm /usr/local/lib/$(python3 -c "import sys;print(''.join(str(x) for x in ['python',sys.version_info.major,'.',sys.version_info.minor]))")/dist-packages/cv2.so
-sudo ln -s $(ls /usr/local/python/cv2/$(python3 -c "import sys;print(''.join(str(x) for x in ['python-',sys.version_info.major,'.',sys.version_info.minor]))")/cv*$(gcc -dumpmachine).so) /usr/local/lib/$(python3 -c "import sys;print(''.join(str(x) for x in ['python',sys.version_info.major,'.',sys.version_info.minor]))")/dist-packages/cv2.so
+sudo ln -s $(ls /usr/python/cv2/$(python3 -c "import sys;print(''.join(str(x) for x in ['python-',sys.version_info.major,'.',sys.version_info.minor]))")/cv*$(gcc -dumpmachine).so) /usr/local/lib/$(python3 -c "import sys;print(''.join(str(x) for x in ['python',sys.version_info.major,'.',sys.version_info.minor]))")/dist-packages/cv2.so
 sudo ldconfig
 
+sudo ln -s /usr/local/bin/cmake /usr/bin/cmake
